@@ -10,12 +10,16 @@ func init() {
 	close(c2)
 }
 
-type SelectSource struct{}
+type Source struct{}
 
-func (SelectSource) Int63() int64 {
+func (s Source) Int63() int64 {
+	return int64(s.Uint64() >> 1)
+}
+
+func (Source) Uint64() uint64 {
 	var r uint64
 	var m uint64 = 1
-	for i := 0; i < 63; i++ {
+	for i := 0; i < 64; i++ {
 		select {
 		case <-c1:
 			r = r | m
@@ -23,7 +27,7 @@ func (SelectSource) Int63() int64 {
 		}
 		m *= 2
 	}
-	return int64(r)
+	return r
 }
 
-func (SelectSource) Seed(int64) {}
+func (Source) Seed(int64) {}
