@@ -1,4 +1,4 @@
-package selectrnd
+package selectrand
 
 var (
 	c1 = make(chan struct{})
