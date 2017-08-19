@@ -10,23 +10,20 @@ func init() {
 	close(c2)
 }
 
-func b() byte {
-	var b byte
-	for i := uint(0); i < 8; i++ {
-		select {
-		case <-c1:
-			b = b | (1 << i)
-		case <-c2:
-		}
-	}
-	return b
-}
-
 type SelectSource struct{}
 
 func (SelectSource) Int63() int64 {
-	return 0 // TODO
+	var r uint64
+	var m uint64 = 1
+	for i := 0; i < 63; i++ {
+		select {
+		case <-c1:
+			r = r | m
+		case <-c2:
+		}
+		m *= 2
+	}
+	return int64(r)
 }
 
-func (SelectSource) Seed(int64) {
-}
+func (SelectSource) Seed(int64) {}
